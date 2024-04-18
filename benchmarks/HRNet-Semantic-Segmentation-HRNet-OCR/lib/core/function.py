@@ -48,6 +48,10 @@ def convert_label(label, inverse=False):
                     #  32: 4,
                      33: 17,
                      34: 18}
+    label_type = type(label)
+    if label_type is torch.Tensor:
+        label = np.array(label.detach().cpu())
+
     temp = label.copy()
     if inverse:
         for v,k in label_mapping.items():
@@ -55,6 +59,9 @@ def convert_label(label, inverse=False):
     else:
         for k, v in label_mapping.items():
             temp[label == k] = v
+
+    if label_type is torch.Tensor:
+        temp = torch.Tensor(temp)
     return temp
 
 def convert_color(label, color_map):
