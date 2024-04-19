@@ -74,6 +74,10 @@ def main():
     model = eval('models.'+config.MODEL.NAME +
                  '.get_seg_model')(config)
 
+    gpus = list(config.GPUS)
+    print('GPUS:', gpus)
+    model = nn.DataParallel(model, device_ids=gpus).cuda()
+
     dump_input = torch.rand(
         (1, 3, config.TRAIN.IMAGE_SIZE[1], config.TRAIN.IMAGE_SIZE[0])
     )
@@ -97,9 +101,9 @@ def main():
     model_dict.update(pretrained_dict)
     model.load_state_dict(model_dict)
 
-    gpus = list(config.GPUS)
-    print('GPUS:',gpus)
-    model = nn.DataParallel(model, device_ids=gpus).cuda()
+    #gpus = list(config.GPUS)
+    #print('GPUS:',gpus)
+    #model = nn.DataParallel(model, device_ids=gpus).cuda()
 
     # prepare data
     test_size = (config.TEST.IMAGE_SIZE[1], config.TEST.IMAGE_SIZE[0])
