@@ -76,12 +76,18 @@ def main():
 
     gpus = list(config.GPUS)
     print('GPUS:', gpus)
+
+    devices = ','.join([str(gpu) for gpu in gpus])
+    print('devices:', devices)
+    
+    os.environ['CUDA_VISIBLE_DEVICES'] = devices
+
     model = nn.DataParallel(model, device_ids=gpus).cuda()
 
     dump_input = torch.rand(
         (1, 3, config.TRAIN.IMAGE_SIZE[1], config.TRAIN.IMAGE_SIZE[0])
     )
-    logger.info(get_model_summary(model.cuda(), dump_input.cuda()))
+    # logger.info(get_model_summary(model.cuda(), dump_input.cuda()))
 
     if config.TEST.MODEL_FILE:
         model_state_file = config.TEST.MODEL_FILE
